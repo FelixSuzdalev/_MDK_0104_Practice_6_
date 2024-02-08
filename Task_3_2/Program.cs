@@ -1,4 +1,5 @@
-﻿using System;
+﻿//ала
+using System;
 using System.IO;
 namespace Task_3_2
 {
