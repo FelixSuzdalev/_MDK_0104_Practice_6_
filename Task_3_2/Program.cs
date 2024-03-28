@@ -1,4 +1,4 @@
-﻿//ала
+﻿
 using System;
 using System.IO;
 namespace Task_3_2
@@ -39,4 +39,4 @@ namespace Task_3_2
             }
         }
     }
-}
+}//dsdsdsd

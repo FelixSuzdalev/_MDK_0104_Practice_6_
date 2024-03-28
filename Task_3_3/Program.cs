@@ -27,24 +27,58 @@ namespace Task_3_3
                 Console.Write("Введите фамилию сотрудника для поиска его номера: ");
                 string searchName = Console.ReadLine();
                 bool found = false;
-                int fileNumber = 1;
 
                 T.Seek(0, SeekOrigin.Begin);
-                string lineFromFile;
-                while ((lineFromFile = new StreamReader(T).ReadLine()) != null)
+                string lineFromFile = string.Empty;
+                byte[] bytesFromFile = new byte[1024];
+
+
+                {
+                    int index = 0;
+                    int b = 0;
+                    while (true)
+                    {
+                        b = T.ReadByte();
+                        if (b == -1)
+                            break;
+                        bytesFromFile[index++] = (byte)b;
+                    }
+
+                    for (int i = 0; i != index - 1; ++i)
+                    {
+                        char ch = (char)bytesFromFile[i];
+                        lineFromFile += ch;
+                    }
+                }
+                //Clear from \r symbol
+                string[] stringsFromFile = lineFromFile.Split('\n');
+                for (int i = 0; i != stringsFromFile.Length; ++i)
+                    stringsFromFile[i] = stringsFromFile[i].Remove(stringsFromFile[i].Length - 1, 1);
+
+
+                foreach (string s in stringsFromFile)
                 {
                     if (lineFromFile.Contains(searchName))
                     {
-                        string[] parts = lineFromFile.Split(' ');
-                        File.WriteAllText($"{searchName}_{fileNumber}.txt", $"{searchName} {parts[1]}");
+                        string[] parts = s.Split(' ');
+
+                        FileStream outfile = new FileStream($"{searchName}.txt", FileMode.OpenOrCreate, FileAccess.Write);
+                        byte[] byteOutString = System.Text.Encoding.UTF8.GetBytes($"{searchName} {parts[1]}");
+                        outfile.Write(byteOutString, 0, byteOutString.Length);
                         found = true;
-                        fileNumber++;
+                        outfile.Close();
+                        Console.WriteLine($"Сотрудник с фамилией {searchName} найден");
+                        break;
                     }
                 }
 
                 if (!found)
                 {
-                    File.WriteAllText("errors.txt", $"Сотрудник с фамилией {searchName} не найден.");
+                    Console.WriteLine($"Сотрудник с фамилией {searchName} не найден");
+                    FileStream fileStream = new FileStream("errors.txt", FileMode.OpenOrCreate, FileAccess.Write);
+                    fileStream.Seek(0, SeekOrigin.End);
+                    byte[] byteOutString = System.Text.Encoding.UTF8.GetBytes($"Сотрудник с фамилией {searchName} не найден\n");
+                    fileStream.Write(byteOutString, 0, byteOutString.Length);
                 }
 
                 Console.WriteLine("Готово!");
@@ -57,4 +91,3 @@ namespace Task_3_3
         }
     }
 }
-
