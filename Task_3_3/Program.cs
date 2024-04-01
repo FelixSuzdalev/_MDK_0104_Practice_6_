@@ -58,7 +58,7 @@ namespace Task_3_3
 
                 foreach (string s in stringsFromFile)
                 {
-                    if (lineFromFile.Contains(searchName))
+                    if (s.Contains(searchName))
                     {
                         string[] parts = s.Split(' ');
 
